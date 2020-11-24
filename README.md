@@ -18,6 +18,24 @@ $ cat abc.txt | advent-of-code-ocr
 ABC
 ```
 
+## Installation
+
+To use as a library, add *advent-of-code-ocr* as a hackage dependency like you
+would any other.
+
+To use as an executable:
+
+```bash
+# using stack
+stack install advent-of-code-ocr
+# using cabal
+cabal install advent-of-code-ocr
+# from source
+git clone https://github.com/mstksg/advent-of-code-ocr
+cd advent-of-code-ocr
+cabal install     # or stack install
+```
+
 ## Compatibility
 
 Should be compatible with all challenges from 2015 to 2019.  However, I have
