@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9c3ba39e3e231890e5e961028fbd7dce78c4e52fe982a877e980cce6ea851b03
+-- hash: 0805d230cfe0698678c80d553c5e6fddf779fa9b6dc4a8ce5afee7dd03dd3c74
 
 name:           advent-of-code-ocr
 version:        0.1.0.0
@@ -82,6 +82,26 @@ test-suite advent-of-code-ocr-test
     , data-default-class
     , heredoc
     , hspec
+    , template-haskell
+    , th-lift
+    , th-lift-instances
+  default-language: Haskell2010
+
+benchmark advent-of-code-ocr-bench
+  type: exitcode-stdio-1.0
+  main-is: bench.hs
+  other-modules:
+      Paths_advent_of_code_ocr
+  hs-source-dirs:
+      bench
+  ghc-options: -Wall -Werror=incomplete-patterns -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N -O2
+  build-depends:
+      advent-of-code-ocr
+    , base >=4.7 && <5
+    , containers
+    , criterion
+    , data-default-class
+    , heredoc
     , template-haskell
     , th-lift
     , th-lift-instances

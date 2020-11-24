@@ -6,6 +6,7 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase                 #-}
 {-# LANGUAGE QuasiQuotes                #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
 {-# LANGUAGE TemplateHaskell            #-}
 
 module Advent.OCR.LetterMap (
@@ -75,13 +76,23 @@ type Point = V2 Int
 contiguousShapes :: Set Point -> Map (V2 Double) (Set (Set Point))
 contiguousShapes s0 = M.fromListWith (<>)
     [ (com, S.singleton (S.map (subtract topCorner) s))
-    | s <- S.toList . S.map flood $ s0
+    | s <- allSubgraphs (S.fromList . fullNeighbs) s0
     , let com            = mean (fmap fromIntegral) s
           V2 topCorner _ = boundingBox s
     ]
+
+allSubgraphs
+    :: forall a. Ord a
+    => (a -> Set a)     -- ^ Expansion
+    -> Set a            -- ^ points
+    -> [Set a]
+allSubgraphs f = go []
   where
-    flood = floodFill (S.fromList . filter (`S.member` s0) . fullNeighbs)
-          . S.singleton
+    go !seen !rest = case S.minView rest of
+      Nothing      -> seen
+      Just (x, xs) ->
+        let new = floodFill (S.intersection xs . f) (S.singleton x)
+        in  go (new : seen) (xs `S.difference` new)
 
 -- | The set of unconnected shapes, sorted against some function on their
 -- original center of masses.

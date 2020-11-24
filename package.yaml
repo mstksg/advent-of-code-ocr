@@ -64,3 +64,16 @@ tests:
     dependencies:
     - advent-of-code-ocr
     - hspec
+
+benchmarks:
+  advent-of-code-ocr-bench:
+    main: bench.hs
+    source-dirs: bench
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -O2
+    dependencies:
+    - advent-of-code-ocr
+    - criterion
