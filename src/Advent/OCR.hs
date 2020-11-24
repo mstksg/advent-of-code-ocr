@@ -4,6 +4,7 @@ module Advent.OCR (
   , parseLettersWith
   , parseLettersEither
   , unsafeParseLetters
+  , parseAsciiMap
   -- * Letter Map
   , LetterMap
   , defaultLetterMap
@@ -68,3 +69,12 @@ unsafeParseLetters
 unsafeParseLetters lm =
       fromMaybe (error "Advent.OCR.unsafeParseLetters: Unable to parse letters")
     . parseLetters lm
+
+-- | Parse a raw ASCII map into a set of points, usable with
+-- 'parseLetters'.
+parseAsciiMap
+    :: Set Char             -- ^ characters to use as "on"/included
+    -> String               -- ^ raw map
+    -> Set (Int, Int)
+parseAsciiMap c = S.mapMonotonic (\(V2 x y) -> (x, y)) . parseAsciiMapV2 c
+

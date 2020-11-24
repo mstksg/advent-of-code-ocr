@@ -12,7 +12,7 @@ module Advent.OCR.LetterMap (
   , Point
   , contiguousShapes
   , contiguousShapesBy
-  , parseAsciiMap
+  , parseAsciiMapV2
   , rawLetterforms1
   , rawLetterforms2
   , toLetterMap
@@ -55,12 +55,11 @@ instance Fractional a => Fractional (V2 a) where
 
 type Point = V2 Int
 
-
 -- | The set of unconnected shapes, indexed by their original center of
 -- mass
-contiguousShapes :: Set Point -> Map (V2 Double) (Set Point)
-contiguousShapes s0 = M.fromList
-    [ (com, S.map (subtract topCorner) s)
+contiguousShapes :: Set Point -> Map (V2 Double) (Set (Set Point))
+contiguousShapes s0 = M.fromListWith (<>)
+    [ (com, S.singleton (S.map (subtract topCorner) s))
     | s <- S.toList . S.map flood $ s0
     , let com            = mean (fmap fromIntegral) s
           V2 topCorner _ = boundingBox s
@@ -70,13 +69,13 @@ contiguousShapes s0 = M.fromList
           . S.singleton
 
 -- | The set of unconnected shapes, sorted against some function on their
--- original center of masses
+-- original center of masses.
 contiguousShapesBy
     :: Ord a
     => (V2 Double -> a)
     -> Set Point
     -> [Set Point]
-contiguousShapesBy f = toList . M.mapKeys f . contiguousShapes
+contiguousShapesBy f = concatMap toList . M.mapKeys f . contiguousShapes
 
 floodFill
     :: Ord a
@@ -126,17 +125,20 @@ toLetterMap ls = LetterMap
                . M.fromList
                . zipWith (flip (,)) ls
                . contiguousShapesBy v2x
-               . parseAsciiMap
+               . parseAsciiMapV2 (S.singleton '#')
 
-parseAsciiMap
-    :: String
+-- | Parse a raw ASCII map into a set of points, usable with
+-- 'parseLettersV2'.
+parseAsciiMapV2
+    :: Set Char             -- ^ characters to use as "on"/included
+    -> String               -- ^ raw map
     -> Set Point
-parseAsciiMap = zipWithFold (\i -> zipWithFold (\j x ->
-                    if x == '#'
-                      then S.singleton (V2 j i)
-                      else S.empty
-                  ) [0..]) [0..]
-              . lines
+parseAsciiMapV2 c = zipWithFold (\i -> zipWithFold (\j x ->
+                        if x `S.member` c
+                          then S.singleton (V2 j i)
+                          else S.empty
+                      ) [0..]) [0..]
+                  . lines
 
 zipWithFold
     :: Monoid m

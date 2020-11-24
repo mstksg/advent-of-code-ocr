@@ -8,6 +8,7 @@ module Advent.OCR.Internal (
   , Point
   , parseLettersV2
   , parseLettersEitherV2
+  , parseAsciiMapV2
   -- * Letter Map
   , LetterMap(..)
   , lookupLetterMap
@@ -18,7 +19,6 @@ module Advent.OCR.Internal (
   -- * Utility
   , contiguousShapes
   , contiguousShapesBy
-  , parseAsciiMap
   ) where
 
 import           Advent.OCR.LetterMap

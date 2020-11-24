@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4a576292ed8e3dc35421b6f36ceb574d8bedbd1a102b965a3551e011107309f9
+-- hash: f7fca8259cd45bba4b7a701a622bc89461ee6b90eac1aa6799089ed32e83c78b
 
 name:           advent-of-code-ocr
 version:        0.1.0.0
@@ -39,6 +39,24 @@ library
     , containers
     , data-default-class
     , heredoc
+    , th-lift
+    , th-lift-instances
+  default-language: Haskell2010
+
+executable advent-of-code-ocr
+  main-is: ocr.hs
+  other-modules:
+      Paths_advent_of_code_ocr
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Werror=incomplete-patterns -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      advent-of-code-ocr
+    , base >=4.7 && <5
+    , containers
+    , data-default-class
+    , heredoc
+    , optparse-applicative
     , th-lift
     , th-lift-instances
   default-language: Haskell2010
