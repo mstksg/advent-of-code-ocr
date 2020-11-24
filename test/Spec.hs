@@ -1,28 +1,27 @@
 {-# LANGUAGE QuasiQuotes #-}
 
 import           Advent.OCR
-import           Data.Default.Class
 import           Test.Hspec
 import           Text.Heredoc
-import qualified Data.Set           as S
+import qualified Data.Set     as S
 
 main :: IO ()
 main = hspec $ do
     describe "2016 Day 8" $ do
       it "should parse a sample result correctly" $ do
-        asciiMapToLetters (S.singleton '#') def y2016d08
+        asciiMapToLetters (S.singleton '#') y2016d08
             `shouldBe` Just "ZJHRKCPLYJ"
     describe "2018 Day 10" $ do
       it "should parse a sample result correctly" $ do
-        asciiMapToLetters (S.singleton '#') def y2018d10
+        asciiMapToLetters (S.singleton '#') y2018d10
             `shouldBe` Just "AHZLLCAL"
     describe "2019 Day 8" $ do
       it "should parse a sample result correctly" $ do
-        asciiMapToLetters (S.singleton '#') def y2019d08
+        asciiMapToLetters (S.singleton '#') y2019d08
             `shouldBe` Just "UBUFP"
     describe "2019 Day 11" $ do
       it "should parse a sample result correctly, even mirrored" $ do
-        asciiMapToLetters (S.singleton '#') def y2019d11
+        asciiMapToLetters (S.singleton '#') y2019d11
             `shouldBe` Just "JKZLZJBH"
 
 y2016d08 :: String

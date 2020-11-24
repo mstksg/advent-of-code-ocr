@@ -32,7 +32,7 @@ main = do
        <> header "advent-of-code-orc - Advent of Code ASCII parser"
         )
     inp <- getContents
-    case asciiMapToLetters oChars defaultLetterMap inp of
+    case asciiMapToLetters oChars inp of
       Nothing  -> do
         hPutStrLn stderr "No valid parse"
         exitFailure
