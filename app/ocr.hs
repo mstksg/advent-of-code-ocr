@@ -31,8 +31,8 @@ main = do
        <> progDesc "Parse an ASCII image into its letters."
        <> header "advent-of-code-orc - Advent of Code ASCII parser"
         )
-    inp <- parseAsciiMap oChars <$> getContents
-    case parseLetters defaultLetterMap inp of
+    inp <- getContents
+    case asciiMapToLetters oChars defaultLetterMap inp of
       Nothing  -> do
         hPutStrLn stderr "No valid parse"
         exitFailure

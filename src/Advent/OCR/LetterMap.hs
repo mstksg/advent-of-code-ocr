@@ -15,7 +15,7 @@ module Advent.OCR.LetterMap (
   , parseAsciiMapV2
   , rawLetterforms1
   , rawLetterforms2
-  , toLetterMap
+  , parseLetterMap
   , lookupLetterMap
   ) where
 
@@ -32,6 +32,8 @@ import           Text.Heredoc             (here)
 import qualified Data.Map                 as M
 import qualified Data.Set                 as S
 
+-- | Type used internally to represent points; useful for its 'Num' and
+-- 'Applicative' instances.
 data V2 a = V2 { v2x :: !a, v2y :: !a }
   deriving (Show, Functor, Eq, Ord, Generic, Data)
 
@@ -53,6 +55,7 @@ instance Fractional a => Fractional (V2 a) where
     V2 x1 y1 / V2 x2 y2 = V2 (x1 / x2) (y1 / y2)
     fromRational x = V2 (fromRational x) (fromRational x)
 
+-- | A point is a 2-vector of ints.
 type Point = V2 Int
 
 -- | The set of unconnected shapes, indexed by their original center of
@@ -110,32 +113,57 @@ mean f xs0 = sx1 / sx0
       []   -> (x0, x1)
       x:xs -> go (x0 + 1) (x1 + f x) xs
 
--- | A map of a set of "on" points (for a 4x6 grid) to the letter they
--- represent.
+-- | A database associating a set of "on" points to the
+-- letter they represent.
+--
+-- See 'Advent.OCR.Internal.defaultLetterMap' for a database compatible
+-- with Advent of Code 2015-2019.
 newtype LetterMap = LetterMap { getLetterMap :: Map (Set Point) Char }
   deriving (Show, Eq, Ord, Semigroup, Monoid, Generic, Data)
 
 instance Lift LetterMap
 
+-- | Lookup a set of points for the letter it represents in a 'LetterMap'.
+-- The set is expected to be aligned with (0,0) as the upper left corner of
+-- its obunding box.
 lookupLetterMap :: Set Point -> LetterMap -> Maybe Char
 lookupLetterMap k = M.lookup k . getLetterMap
 
-toLetterMap :: String -> String -> LetterMap
-toLetterMap ls = LetterMap
-               . M.fromList
-               . zipWith (flip (,)) ls
-               . contiguousShapesBy v2x
-               . parseAsciiMapV2 (S.singleton '#')
+-- | Given a list of characters and ASCII art for all those characters
+-- (from left to right), builds the appropriate 'LetterMap'.
+--
+-- An example usage would be:
+--
+-- @
+-- 'parseLetterMap' "ABC" abcArt
+-- @
+--
+-- where @abcArt@ is:
+--
+-- > .##..###...##.
+-- > #..#.#..#.#..#
+-- > #..#.###..#...
+-- > ####.#..#.#...
+-- > #..#.#..#.#..#
+-- > #..#.###...##.
+--
+-- Expects ASCII art where @#@ is the "on"/included character.
+parseLetterMap :: [Char] -> String -> LetterMap
+parseLetterMap ls = LetterMap
+                  . M.fromList
+                  . zipWith (flip (,)) ls
+                  . contiguousShapesBy v2x
+                  . parseAsciiMapV2 (S.singleton '#')
 
--- | Parse a raw ASCII map into a set of points, usable with
--- 'parseLettersV2'.
+-- | Parse raw ASCII art into a set of points, usable with
+-- 'Advent.OCR.Internal.parseLettersV2'.
 parseAsciiMapV2
     :: Set Char             -- ^ characters to use as "on"/included
-    -> String               -- ^ raw map
+    -> String               -- ^ raw map ASCII art
     -> Set Point
-parseAsciiMapV2 c = zipWithFold (\i -> zipWithFold (\j x ->
+parseAsciiMapV2 c = zipWithFold (\j -> zipWithFold (\i x ->
                         if x `S.member` c
-                          then S.singleton (V2 j i)
+                          then S.singleton (V2 i j)
                           else S.empty
                       ) [0..]) [0..]
                   . lines
@@ -148,7 +176,9 @@ zipWithFold
     -> m
 zipWithFold f xs = fold . zipWith f xs
 
--- | Seen in 2016 Day 8, 2019 Day 8 and 11.
+-- | Seen in 2016 Day 8, 2019 Day 8 and 11.  4x6 glyphs.
+--
+-- Load using @uncurry 'parseLetterMap'@.
 rawLetterforms1 :: (String, String)
 rawLetterforms1 = ("ABCEFGHJKLPRUYZ", drop 1 [here|
 .##..###...##..####.####..##..#..#...##.#..#.#....###..###..#..#.#...#.####
@@ -160,9 +190,12 @@ rawLetterforms1 = ("ABCEFGHJKLPRUYZ", drop 1 [here|
 |])
 
 -- | Based on
--- <https://gist.github.com/usbpc/5fa0be48ad7b4b0594b3b8b029bc47b4>.
+-- <https://gist.github.com/usbpc/5fa0be48ad7b4b0594b3b8b029bc47b4>.  6x10
+-- glyphs.
 --
--- Seen in 2018 Day 10
+-- Seen in 2018 Day 10.
+--
+-- Load using @uncurry 'parseLetterMap'@.
 rawLetterforms2 :: (String, String)
 rawLetterforms2 = ("ABCEFGHJKLNPRXZ", drop 1 [here|
 ..##...#####...####..######.######..####..#....#....###.#....#.#......#....#.#####..#####..#....#.######

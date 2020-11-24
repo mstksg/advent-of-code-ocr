@@ -1,3 +1,15 @@
+-- |
+-- Module      : Advent.OCR
+-- Copyright   : (c) Justin Le 2020
+-- License     : BSD3
+--
+-- Maintainer  : justin@jle.im
+-- Stability   : experimental
+-- Portability : non-portable
+--
+-- Library to parse "ASCII Art" letters from <https://adventofcode.com
+-- Advent of Code> puzzles.  Compatible with all puzzles from 2015 to 2019.
+
 module Advent.OCR (
   -- * Parse
     parseLetters
@@ -5,10 +17,10 @@ module Advent.OCR (
   , parseLettersEither
   , unsafeParseLetters
   , parseAsciiMap
+  , asciiMapToLetters
   -- * Letter Map
   , LetterMap
   , defaultLetterMap
-  , toLetterMap
   ) where
 
 import           Advent.OCR.Internal
@@ -20,7 +32,7 @@ import qualified Data.Set            as S
 -- | A version of 'parseLetters' that takes a set of any type of value, as
 -- long as you provide functions to access the X and Y coordinates.
 parseLettersWith
-    :: LetterMap
+    :: LetterMap        -- ^ database of letterforms
     -> (a -> Int)       -- ^ get X
     -> (a -> Int)       -- ^ get Y
     -> Set a
@@ -35,13 +47,20 @@ parseLettersWith lm f g = parseLettersV2 lm . S.map (\x -> V2 (f x) (g x))
 -- 'parseLetters' 'defaultLetterMap' myPoints
 --
 -- -- or, using Data.Default
--- 'parseLetters' 'def' myPoints
+-- 'parseLetters' 'Data.Default.Class.def' myPoints
 -- @
 --
 -- A 'Nothing' means that there were no recognized letters found.  A 'Just'
--- means that least least one recognized character was found.  Unrecognized
+-- means that least 50% of letter forms are recognized.  Unrecognized
 -- characters will be replaced with "?"; for more information, use
 -- 'parseLettersEither'.
+--
+-- This function is robust to changes in orientation or flipping, but will
+-- be fastest if the coordinates are oriented with (0,0) on the upper left
+-- corner.  However, because of this, it might return the wrong answer if
+-- your coordinates are /not/ oriented this way and your result is
+-- symmetrical: it'll always prioritize the interpretaion against (0,0)
+-- upper-left orientation first.
 parseLetters
     :: LetterMap            -- ^ database of letterforms
     -> Set (Int, Int)       -- ^ set of points
@@ -51,9 +70,9 @@ parseLetters lm = parseLettersV2 lm . S.mapMonotonic (uncurry V2)
 -- | A version of 'parseLetters' returning a list of characters that were
 -- either recognized or unrecognized; in the case of unrecognized
 -- characters, returns the set of their coordinates but shifted to (0, 0)
--- center of mass.
+-- as its upper left corner.
 parseLettersEither
-    :: LetterMap
+    :: LetterMap            -- ^ database of letterforms
     -> Set (Int, Int)
     -> Maybe [Either (Set (Int, Int)) Char]
 parseLettersEither lm = (fmap . map . first . S.mapMonotonic) (\(V2 x y) -> (x, y))
@@ -70,11 +89,19 @@ unsafeParseLetters lm =
       fromMaybe (error "Advent.OCR.unsafeParseLetters: Unable to parse letters")
     . parseLetters lm
 
--- | Parse a raw ASCII map into a set of points, usable with
+-- | Parse raw ASCII art into a set of points, usable with
 -- 'parseLetters'.
 parseAsciiMap
     :: Set Char             -- ^ characters to use as "on"/included
-    -> String               -- ^ raw map
+    -> String               -- ^ raw ASCII art
     -> Set (Int, Int)
 parseAsciiMap c = S.mapMonotonic (\(V2 x y) -> (x, y)) . parseAsciiMapV2 c
 
+-- | Convenient all-in-one utility function combining 'parseAsciiMap' and
+-- 'parseLetters', to directly parse ASCII art into its letters.
+asciiMapToLetters
+    :: Set Char             -- ^ characters to use as "on"/included in ASCII art
+    -> LetterMap            -- ^ database of letterforms
+    -> String               -- ^ raw ASCII art
+    -> Maybe String
+asciiMapToLetters c lm = parseLettersV2 lm . parseAsciiMapV2 c

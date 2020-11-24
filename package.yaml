@@ -1,23 +1,26 @@
 name:                advent-of-code-ocr
 version:             0.1.0.0
-github:              "githubuser/advent-of-code-ocr"
+github:              "mstksg/advent-of-code-ocr"
 license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2020 Author name here"
+author:              "Justin Le"
+maintainer:          "justin@jle.im"
+copyright:           "2020 Justin Le"
 
 extra-source-files:
 - README.md
 - CHANGELOG.md
 
-# Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
+synopsis:            Parse Advent of Code ASCII art letters
+category:            Text
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/advent-of-code-ocr#readme>
+description: |
+  "OCR" letter recognition for <https://adventofcode.com Advent of Code>
+  puzzles, compatible with all puzzles from 2015 to 2019.  Also comes with a
+  handy command line utility to parse the ASCII art directly from stdin.
+
 
 ghc-options:
 - -Wall
@@ -49,13 +52,14 @@ executables:
     - advent-of-code-ocr
     - optparse-applicative
 
-# tests:
-#   advent-of-code-ocr-test:
-#     main:                Spec.hs
-#     source-dirs:         test
-#     ghc-options:
-#     - -threaded
-#     - -rtsopts
-#     - -with-rtsopts=-N
-#     dependencies:
-#     - advent-of-code-ocr
+tests:
+  advent-of-code-ocr-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - advent-of-code-ocr
+    - hspec
