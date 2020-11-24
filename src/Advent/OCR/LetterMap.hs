@@ -1,10 +1,12 @@
 {-# LANGUAGE BangPatterns               #-}
+{-# LANGUAGE CPP                        #-}
 {-# LANGUAGE DeriveDataTypeable         #-}
 {-# LANGUAGE DeriveFunctor              #-}
 {-# LANGUAGE DeriveGeneric              #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase                 #-}
 {-# LANGUAGE QuasiQuotes                #-}
+{-# LANGUAGE TemplateHaskell            #-}
 
 module Advent.OCR.LetterMap (
     LetterMap(..)
@@ -19,18 +21,19 @@ module Advent.OCR.LetterMap (
   , lookupLetterMap
   ) where
 
-import           Data.Data                (Data)
+import           Data.Data                  (Data)
 import           Data.Foldable
-import           Data.Map                 (Map)
+import           Data.Map                   (Map)
 import           Data.Monoid
 import           Data.Semigroup
-import           Data.Set                 (Set)
+import           Data.Set                   (Set)
 import           GHC.Generics
-import           Instances.TH.Lift        ()
+import           Instances.TH.Lift          ()
 import           Language.Haskell.TH.Lift
-import           Text.Heredoc             (here)
-import qualified Data.Map                 as M
-import qualified Data.Set                 as S
+import           Language.Haskell.TH.Syntax
+import           Text.Heredoc               (here)
+import qualified Data.Map                   as M
+import qualified Data.Set                   as S
 
 -- | Type used internally to represent points; useful for its 'Num' and
 -- 'Applicative' instances.
@@ -54,6 +57,15 @@ instance Fractional a => Fractional (V2 a) where
     recip (V2 x y) = V2 (recip x) (recip y)
     V2 x1 y1 / V2 x2 y2 = V2 (x1 / x2) (y1 / y2)
     fromRational x = V2 (fromRational x) (fromRational x)
+
+instance Lift a => Lift (V2 a) where
+    lift (V2 x y) = do
+      lx <- lift x
+      ly <- lift y
+      pure $ AppE (AppE (ConE 'V2) lx) ly
+#if MIN_VERSION_template_haskell(2,16,0)
+    liftTyped = fmap TExp . lift
+#endif
 
 -- | A point is a 2-vector of ints.
 type Point = V2 Int
@@ -121,7 +133,11 @@ mean f xs0 = sx1 / sx0
 newtype LetterMap = LetterMap { getLetterMap :: Map (Set Point) Char }
   deriving (Show, Eq, Ord, Semigroup, Monoid, Generic, Data)
 
-instance Lift LetterMap
+instance Lift LetterMap where
+    lift (LetterMap x) = AppE (ConE 'LetterMap) <$> lift x
+#if MIN_VERSION_template_haskell(2,16,0)
+    liftTyped = fmap TExp . lift
+#endif
 
 -- | Lookup a set of points for the letter it represents in a 'LetterMap'.
 -- The set is expected to be aligned with (0,0) as the upper left corner of
