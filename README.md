@@ -49,3 +49,14 @@ only tested it with:
 
 And it is possible I have missed some.  If you notice any I am missing, please
 let me know!
+
+## Credit
+
+Much of the content for the letterforms was gathered on freenode ##adventofcode
+and solutions threads on reddit; the large font for the most part has been
+gathered by [u/usbpc102][] on reddit. `O` and `I` letterforms for the small
+font contributed by [u/TheShallowOne][] on reddit for version 1.1.10.
+
+[u/usbpc102]: https://gist.github.com/usbpc/5fa0be48ad7b4b0594b3b8b029bc47b4
+[u/TheShallowOne]: https://www.reddit.com/r/adventofcode/comments/k0lzz6/adventofcodeocr_command_line_utilityhaskell/gdwwu39
+
