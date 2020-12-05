@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: c9fca577a0ca10ba5ac99d9aec0bea19ffae6b6eb6dea3a2be3d569991f6cfbe
+-- hash: 4eeb46332868b43860577b7f5d67c0b243c4bfed76ed462fc184d5da99771956
 
 name:           advent-of-code-ocr
-version:        0.1.1.0
+version:        0.1.2.0
 synopsis:       Parse Advent of Code ASCII art letters
 description:    "OCR" letter recognition for <https://adventofcode.com Advent of Code>
                 puzzles, compatible with all puzzles from 2015 to 2019.  Also comes with a
