@@ -22,19 +22,20 @@ module Advent.OCR.LetterMap (
   , lookupLetterMap
   ) where
 
-import           Data.Data                  (Data)
+import           Data.Data                         (Data)
 import           Data.Foldable
-import           Data.Map                   (Map)
+import           Data.Map                          (Map)
 import           Data.Monoid
 import           Data.Semigroup
-import           Data.Set                   (Set)
+import           Data.Set                          (Set)
 import           GHC.Generics
-import           Instances.TH.Lift          ()
+import           Instances.TH.Lift                 ()
 import           Language.Haskell.TH.Lift
 import           Language.Haskell.TH.Syntax
-import           Text.Heredoc               (here)
-import qualified Data.Map                   as M
-import qualified Data.Set                   as S
+import           Language.Haskell.TH.Syntax.Compat (liftSplice)
+import           Text.Heredoc                      (here)
+import qualified Data.Map                          as M
+import qualified Data.Set                          as S
 
 -- | Type used internally to represent points; useful for its 'Num' and
 -- 'Applicative' instances.
@@ -65,7 +66,7 @@ instance Lift a => Lift (V2 a) where
       ly <- lift y
       pure $ AppE (AppE (ConE 'V2) lx) ly
 #if MIN_VERSION_template_haskell(2,16,0)
-    liftTyped = fmap TExp . lift
+    liftTyped = liftSplice . fmap TExp . lift
 #endif
 
 -- | A point is a 2-vector of ints.
@@ -147,7 +148,7 @@ newtype LetterMap = LetterMap { getLetterMap :: Map (Set Point) Char }
 instance Lift LetterMap where
     lift (LetterMap x) = AppE (ConE 'LetterMap) <$> lift x
 #if MIN_VERSION_template_haskell(2,16,0)
-    liftTyped = fmap TExp . lift
+    liftTyped = liftSplice . fmap TExp . lift
 #endif
 
 -- | Lookup a set of points for the letter it represents in a 'LetterMap'.
