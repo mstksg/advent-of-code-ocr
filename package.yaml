@@ -31,6 +31,7 @@ dependencies:
 - base >= 4.7 && < 5
 - containers
 - heredoc
+- th-compat
 - th-lift-instances
 - th-lift
 - data-default-class

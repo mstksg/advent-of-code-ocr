@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.2.
+-- This file has been generated from package.yaml by hpack version 0.34.7.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4eeb46332868b43860577b7f5d67c0b243c4bfed76ed462fc184d5da99771956
+-- hash: 198f4efde642be162ddccd7696856d5dc3d26bad459e92fadaa1e420a0dfc8e5
 
 name:           advent-of-code-ocr
 version:        0.1.2.0
@@ -44,6 +44,7 @@ library
     , data-default-class
     , heredoc
     , template-haskell
+    , th-compat
     , th-lift
     , th-lift-instances
   default-language: Haskell2010
@@ -63,6 +64,7 @@ executable advent-of-code-ocr
     , heredoc
     , optparse-applicative
     , template-haskell
+    , th-compat
     , th-lift
     , th-lift-instances
   default-language: Haskell2010
@@ -83,6 +85,7 @@ test-suite advent-of-code-ocr-test
     , heredoc
     , hspec
     , template-haskell
+    , th-compat
     , th-lift
     , th-lift-instances
   default-language: Haskell2010
@@ -103,6 +106,7 @@ benchmark advent-of-code-ocr-bench
     , data-default-class
     , heredoc
     , template-haskell
+    , th-compat
     , th-lift
     , th-lift-instances
   default-language: Haskell2010
