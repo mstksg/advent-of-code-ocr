@@ -38,7 +38,7 @@ cabal install     # or stack install
 
 ## Compatibility
 
-Should be compatible with all challenges from 2015 to 2019.  However, I have
+Should be compatible with all challenges from 2015 to 2021.  However, I have
 only tested it with:
 
 
@@ -46,6 +46,8 @@ only tested it with:
 *   2018 Day 10
 *   2019 Day 8
 *   2019 Day 11
+*   2021 Day 13 (thanks @uvg)
+*   2022 Day 10 (thanks @uvg)
 
 And it is possible I have missed some.  If you notice any I am missing, please
 let me know!

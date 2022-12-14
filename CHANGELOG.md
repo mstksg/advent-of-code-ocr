@@ -1,6 +1,16 @@
 Changelog
 =========
 
+Version 0.1.2.1
+---------------
+
+*December 13, 2022*
+
+<https://github.com/mstksg/advent-of-code-ocr/releases/tag/v0.1.2.1>
+
+*   (#4, @pwm) Update to build with GHC 9+
+*   (#5, @uvg) Update documentation on what days each glyph set is used.
+
 Version 0.1.2.0
 ---------------
 

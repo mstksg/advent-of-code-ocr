@@ -204,7 +204,8 @@ zipWithFold
     -> m
 zipWithFold f xs = fold . zipWith f xs
 
--- | Seen in 2016 Day 8, 2019 Day 8 and 11.  4x6 glyphs.
+-- | Seen in 2016 Day 8, 2019 Day 8 and 11, 2021 Day 13, 2022 Day 10.  4x6
+-- glyphs.
 --
 -- Load using @uncurry 'parseLetterMap'@.
 rawLetterforms1 :: (String, String)
